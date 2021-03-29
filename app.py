@@ -54,7 +54,7 @@ class audiobookFile:
 		self.audiobookUploadTime = str(datetime.now())
 
 #Connecting to MongoDB 
-password = "***"
+password = "dev@2000"
 cluster = MongoClient("mongodb+srv://dev2000:" + urllib.parse.quote_plus(password) + "@cluster0.lbm60.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = cluster["audio"]
 collection = db["audio"]
