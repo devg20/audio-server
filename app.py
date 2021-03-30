@@ -6,7 +6,125 @@ mongodb+srv://dev2000:<password>@cluster0.lbm60.mongodb.net/myFirstDatabase?retr
 Before running the script, please edit line number 57 and add password.
 I have sent the password on chat.
 
-Also, I have added appropriate comments for api calls and syntax of data to be sent.
+Please go through the below documentation for better understanding of the endpoints.
+
+Defining all endpoints:
+
+1. Create
+To successfully create a new song/podcast/audiobook data entry on the database
+use the following api call and json formats:
+
+Api Call: http://127.0.0.1:5000/create-audio OR Using Heroku: https://audio-server-mongo.herokuapp.com/create-audio
+	1.  For sending song data:
+		Data to be sent in JSON format
+		{
+		    "audioFileType": "Song",
+		    "audioFileMetadata": {
+		    	"Id": 2,
+		    	"Name": "We Don't Talk Anymore",
+		    	"Duration": 231
+		    }
+		}
+
+	2.  For sending podcast data:
+		Data to be sent in JSON format
+		{
+		    "audioFileType": "Podcast",
+		    "audioFileMetadata": {
+				"Id": 3,
+			    "Name": "The Data Skeptic",
+			    "Duration": 1800,
+			    "Host": "Kyle Polich",
+			    "Participants": ["Prasanth Pulavarthi", "Kyle Polich"]
+		    }
+		}
+
+	3.  For sending audiobook data:
+		Data to be sent in JSON format
+		{
+		    "audioFileType": "Audiobook",
+		    "audioFileMetadata": {
+				"Id": 8,
+			    "Title": "The Better Angels of Our Nature ",
+			    "Author": "Steven Pinker",
+			    "Narrator": "Arthur Murrey",
+			    "Duration": 131940
+		    }
+		}
+
+2. Delete
+To successfully delete a song/podcast/audiobook data on the database,
+use the following api calls:
+
+	1.  For deleting song data:
+		Api Call: http://127.0.0.1:5000/delete-audio/Song/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/delete-audio/Song/<audioFileID>
+
+	2.  For deleting podcast data:
+		Api Call: http://127.0.0.1:5000/delete-audio/Podcast/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/delete-audio/Podcast/<audioFileID>
+
+	3.  For deleting audiobook data:
+		Api Call: http://127.0.0.1:5000/delete-audio/Audiobook/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/delete-audio/Audiobook/<audioFileID>
+
+3. Update
+To successfully update a song/podcast/audiobook data on the database,
+use the following api call and json formats:
+NOTE: New ID cannot be assigned.
+
+	1.  For updating song data:
+		Api Call: http://127.0.0.1:5000/update-audio/Song/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/update-audio/Song/<audioFileID>
+		Data to be sent in JSON format
+		{
+			"audioFileType": "Song", #Only if audioFileType is to updated
+		    "audioFileMetadata": {
+		    	"Name": "Titanium",
+		    	"Duration": 245
+		    }
+		}
+
+	2.  For updating podcast data:
+		Api Call: http://127.0.0.1:5000/update-audio/Podcast/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/update-audio/Podcast/<audioFileID>
+		Data to be sent in JSON format
+		{
+		    "audioFileType": "Podcast", #Only if audioFileType is to updated
+		    "audioFileMetadata": {
+			    "Name": "xyz",
+			    "Duration": 2000,
+			    "Host": "AAA BBB",
+			    "Participants": ["Dev", "Aman"]
+		    }
+		}
+
+	3.  For updating audiobook data:
+		Api Call: http://127.0.0.1:5000/update-audio/Audiobook/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/update-audio/Audiobook/<audioFileID>
+		Data to be sent in JSON format
+		{
+		    "audioFileType": "Audiobook", #Only if audioFileType is to updated
+		    "audioFileMetadata": {
+			    "Title": "Any ",
+			    "Author": "Adam",
+			    "Narrator": "Siri",
+			    "Duration": 20000
+		    }
+		}
+
+4. Get
+To successfully get details of a song/podcast/audiobook data on the database,
+use the following api calls:
+
+	1.  For getting song data:
+		Api Call: http://127.0.0.1:5000/Song/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/Song/<audioFileID>
+		For getting all songs data:
+		Api Call: http://127.0.0.1:5000/Song OR Using Heroku: https://audio-server-mongo.herokuapp.com/Song
+	2.  For getting podcast data:
+		Api Call: http://127.0.0.1:5000/Podcast/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/Podcast/<audioFileID>
+		For getting all podcasts data:
+		Api Call: http://127.0.0.1:5000/Podcast OR Using Heroku: https://audio-server-mongo.herokuapp.com/Podcast
+
+	3.  For getting audiobook data:
+		Api Call: http://127.0.0.1:5000/Audiobook/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/Audiobook/<audioFileID>
+		For getting all audiobooks data:
+		Api Call: http://127.0.0.1:5000/Audiobook OR Using Heroku: https://audio-server-mongo.herokuapp.com/Audiobook
+
 """
 
 #Importing required packages
@@ -64,44 +182,7 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-"""
-To successfully create a new song/podcast/audiobook data entry on the database
-use the following api call and json formats:
-Api Call: http://127.0.0.1:5000/create-audio
-1. For sending song data:
-{
-    "audioFileType": "Song",
-    "audioFileMetadata": {
-    	"Id": 2,
-    	"Name": "We Don't Talk Anymore",
-    	"Duration": 231
-    }
-}
 
-2. For sending podcast data:
-{
-    "audioFileType": "Podcast",
-    "audioFileMetadata": {
-		"Id": 3,
-	    "Name": "The Data Skeptic",
-	    "Duration": 1800,
-	    "Host": "Kyle Polich",
-	    "Participants": ["Prasanth Pulavarthi", "Kyle Polich"]
-    }
-}
-
-3. For sending audiobook data:
-{
-    "audioFileType": "Audiobook",
-    "audioFileMetadata": {
-		"Id": 8,
-	    "Title": "The Better Angels of Our Nature ",
-	    "Author": "Steven Pinker",
-	    "Narrator": "Arthur Murrey",
-	    "Duration": 131940
-    }
-}
-"""
 @app.route('/create-audio', methods=['POST'])
 def createAudio():
 	data = request.get_json()
@@ -173,19 +254,7 @@ def createAudio():
 		else:
 			return "**Please enter all mandatory data fields!**"
 
-"""
-To successfully delete a song/podcast/audiobook data on the database,
-use the following api calls:
 
-1. For deleting song data:
-Api Call: http://127.0.0.1:5000/delete-audio/Song/<audioFileID>
-
-2. For deleting podcast data:
-Api Call: http://127.0.0.1:5000/delete-audio/Podcast/<audioFileID>
-
-3. For deleting audiobook data:
-Api Call: http://127.0.0.1:5000/delete-audio/Audiobook/<audioFileID>
-"""
 @app.route('/delete-audio/<audioFileType>/<audioFileID>', methods=['POST'])
 def deleteAudio(audioFileType, audioFileID):
 	parameters = {"FileType": str(audioFileType), "_id": int(audioFileID)}
@@ -195,46 +264,7 @@ def deleteAudio(audioFileType, audioFileID):
 	else:
 		return "The request is invalid: 400 bad request\n\n**File not found!**"
 
-"""
-To successfully update a song/podcast/audiobook data on the database,
-use the following api call and json formats:
-NOTE: New ID cannot be assigned.
 
-1. For updating song data:
-Api Call: http://127.0.0.1:5000/update-audio/Song/<audioFileID>
-Data to be sent
-{
-	"audioFileType": "Song", #Only if audioFileType is to updated
-    "audioFileMetadata": {
-    	"Name": "Titanium",
-    	"Duration": 245
-    }
-}
-
-2. For updating podcast data:
-Api Call: http://127.0.0.1:5000/update-audio/Podcast/<audioFileID>
-{
-    "audioFileType": "Podcast", #Only if audioFileType is to updated
-    "audioFileMetadata": {
-	    "Name": "xyz",
-	    "Duration": 2000,
-	    "Host": "AAA BBB",
-	    "Participants": ["Dev", "Aman"]
-    }
-}
-
-3. For updating audiobook data:
-Api Call: http://127.0.0.1:5000/update-audio/Audiobook/<audioFileID>
-{
-    "audioFileType": "Audiobook", #Only if audioFileType is to updated
-    "audioFileMetadata": {
-	    "Title": "Any ",
-	    "Author": "Adam",
-	    "Narrator": "Siri",
-	    "Duration": 20000
-    }
-}
-"""
 @app.route('/update-audio/<audioFileType>/<audioFileID>', methods=['POST'])
 def updateAudio(audioFileType, audioFileID):
 	data = request.get_json()
@@ -248,25 +278,7 @@ def updateAudio(audioFileType, audioFileID):
 	else:
 		return "The request is invalid: 400 bad request\n\n**File not found!**"
 
-"""
-To successfully get details of a song/podcast/audiobook data on the database,
-use the following api calls:
 
-1.  For getting song data:
-	Api Call: http://127.0.0.1:5000/Song/<audioFileID>
-	For getting all songs data:
-	Api Call: http://127.0.0.1:5000/Song
-
-2.  For getting podcast data:
-	Api Call: http://127.0.0.1:5000/Podcast/<audioFileID>
-	For getting all podcasts data:
-	Api Call: http://127.0.0.1:5000/Podcast
-
-3.  For getting audiobook data:
-	Api Call: http://127.0.0.1:5000/Audiobook/<audioFileID>
-	For getting all audiobooks data:
-	Api Call: http://127.0.0.1:5000/Audiobook
-"""
 @app.route('/<audioFileType>', defaults={'audioFileID': None}, methods=['POST'])
 @app.route('/<audioFileType>/<audioFileID>', methods=['POST'])
 def getAudio(audioFileType, audioFileID):
