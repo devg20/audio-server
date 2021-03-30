@@ -10,7 +10,7 @@ Please go through the below documentation for better understanding of the endpoi
 
 Defining all endpoints:
 
-1. Create
+1. Create (Line Number 186)
 To successfully create a new song/podcast/audiobook data entry on the database
 use the following api call and json formats:
 
@@ -52,7 +52,7 @@ Api Call: http://127.0.0.1:5000/create-audio OR Using Heroku: https://audio-serv
 		    }
 		}
 
-2. Delete
+2. Delete (Line Number 259)
 To successfully delete a song/podcast/audiobook data on the database,
 use the following api calls:
 
@@ -65,7 +65,7 @@ use the following api calls:
 	3.  For deleting audiobook data:
 		Api Call: http://127.0.0.1:5000/delete-audio/Audiobook/<audioFileID> OR Using Heroku: https://audio-server-mongo.herokuapp.com/delete-audio/Audiobook/<audioFileID>
 
-3. Update
+3. Update (Line Number 268)
 To successfully update a song/podcast/audiobook data on the database,
 use the following api call and json formats:
 NOTE: New ID cannot be assigned.
@@ -107,7 +107,7 @@ NOTE: New ID cannot be assigned.
 		    }
 		}
 
-4. Get
+4. Get (Line Number 282)
 To successfully get details of a song/podcast/audiobook data on the database,
 use the following api calls:
 
@@ -183,7 +183,7 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-@app.route('/create-audio', methods=['POST'])
+@app.route('/create-audio', methods=['POST']) # Create Endpoint
 def createAudio():
 	data = request.get_json()
 	fileType = str(data["audioFileType"])
@@ -255,7 +255,7 @@ def createAudio():
 			return "**Please enter all mandatory data fields!**"
 
 
-@app.route('/delete-audio/<audioFileType>/<audioFileID>', methods=['POST'])
+@app.route('/delete-audio/<audioFileType>/<audioFileID>', methods=['POST']) # Delete Endpoint
 def deleteAudio(audioFileType, audioFileID):
 	parameters = {"FileType": str(audioFileType), "_id": int(audioFileID)}
 	results = collection.delete_many(parameters)
@@ -265,7 +265,7 @@ def deleteAudio(audioFileType, audioFileID):
 		return "The request is invalid: 400 bad request\n\n**File not found!**"
 
 
-@app.route('/update-audio/<audioFileType>/<audioFileID>', methods=['POST'])
+@app.route('/update-audio/<audioFileType>/<audioFileID>', methods=['POST']) # Update Endpoint
 def updateAudio(audioFileType, audioFileID):
 	data = request.get_json()
 	parameters = {"FileType": str(audioFileType), "_id": int(audioFileID)}
@@ -279,7 +279,7 @@ def updateAudio(audioFileType, audioFileID):
 		return "The request is invalid: 400 bad request\n\n**File not found!**"
 
 
-@app.route('/<audioFileType>', defaults={'audioFileID': None}, methods=['POST'])
+@app.route('/<audioFileType>', defaults={'audioFileID': None}, methods=['POST']) # Get Endpoint
 @app.route('/<audioFileType>/<audioFileID>', methods=['POST'])
 def getAudio(audioFileType, audioFileID):
 	if audioFileID:
