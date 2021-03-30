@@ -107,47 +107,71 @@ def createAudio():
 	data = request.get_json()
 	fileType = str(data["audioFileType"])
 	if fileType.lower() == "song":
-		songId = int(data["audioFileMetadata"]["Id"])
-		songName = str(data["audioFileMetadata"]["Name"])
-		songDuration = int(data["audioFileMetadata"]["Duration"])
-		sf = songFile(songId, songName, songDuration)
-		sf.getUploadTime()
-		document = {"_id": sf.songId, "FileType": "Song", "Name": sf.songName , "Duration": sf.songDuration, "Upload Time": sf.songUploadTime}
-		try:
-			result = collection.insert_one(document)
-			return "Action is successful: 200 OK\n\n**Song Data uploaded to Database!**"
-		except pymongo.errors.DuplicateKeyError:
-			return "The request is invalid: 400 bad request\n\n**File with same ID already exists!**"
-		
+		if all(item in data["audioFileMetadata"].keys() for item in ["Id", "Name", "Duration"]):
+			if len(str(data["audioFileMetadata"]["Name"])) <= 100:
+				songId = int(data["audioFileMetadata"]["Id"])
+				songName = str(data["audioFileMetadata"]["Name"])
+				songDuration = int(data["audioFileMetadata"]["Duration"])
+				sf = songFile(songId, songName, songDuration)
+				sf.getUploadTime()
+				document = {"_id": sf.songId, "FileType": "Song", "Name": sf.songName , "Duration": sf.songDuration, "Upload Time": sf.songUploadTime}
+				try:
+					result = collection.insert_one(document)
+					return "Action is successful: 200 OK\n\n**Song Data uploaded to Database!**"
+				except pymongo.errors.DuplicateKeyError:
+					return "The request is invalid: 400 bad request\n\n**File with same ID already exists!**"
+			else:
+				return "**NOTE: The length of field Name should be less than 100 characters.**"
+		else:
+			return "**Please enter all mandatory data fields!**"
 	elif fileType.lower() == "podcast":
-		podcastId = int(data["audioFileMetadata"]["Id"])
-		podcastName = str(data["audioFileMetadata"]["Name"])
-		podcastDuration = int(data["audioFileMetadata"]["Duration"])
-		podcastHost = str(data["audioFileMetadata"]["Host"])
-		podcastParticipants = data["audioFileMetadata"]["Participants"]
-		pf = podcastFile(podcastId, podcastName, podcastDuration, podcastHost, podcastParticipants)
-		pf.getUploadTime()
-		document = {"_id": pf.podcastId, "FileType": "Podcast", "Name": pf.podcastName , "Duration": pf.podcastDuration, "Host": pf.podcastHost, "Participants": pf.podcastParticipants, "Upload Time": pf.podcastUploadTime}
-		try:
-			collection.insert_one(document)
-			return "Action is successful: 200 OK\n\n**Podcast Data uploaded to Database!**"
-		except pymongo.errors.DuplicateKeyError:
-			return "The request is invalid: 400 bad request\n\n**File with same ID already exists!**"
+		if all(item in data["audioFileMetadata"].keys() for item in ["Id", "Name", "Duration", "Host"]):
+			if len(max([data["audioFileMetadata"]["Name"], data["audioFileMetadata"]["Host"]], key=len)) <= 100:
+				podcastId = int(data["audioFileMetadata"]["Id"])
+				podcastName = str(data["audioFileMetadata"]["Name"])
+				podcastDuration = int(data["audioFileMetadata"]["Duration"])
+				podcastHost = str(data["audioFileMetadata"]["Host"])
+				if "Participants" in data["audioFileMetadata"].keys():
+					if len(data["audioFileMetadata"]["Participants"]) <= 10 and len(max(data["audioFileMetadata"]["Participants"], key=len)) <= 100:
+						podcastParticipants = data["audioFileMetadata"]["Participants"]
+						pf = podcastFile(podcastId, podcastName, podcastDuration, podcastHost, podcastParticipants)
+					else:
+						return "**NOTE: Only 10 Participants allowed with length of names less than 100 characters.**"
+				else:
+					podcastParticipants = []
+					pf = podcastFile(podcastId, podcastName, podcastDuration, podcastHost, podcastParticipants)
+				pf.getUploadTime()
+				document = {"_id": pf.podcastId, "FileType": "Podcast", "Name": pf.podcastName , "Duration": pf.podcastDuration, "Host": pf.podcastHost, "Participants": pf.podcastParticipants, "Upload Time": pf.podcastUploadTime}
+				try:
+					collection.insert_one(document)
+					return "Action is successful: 200 OK\n\n**Podcast Data uploaded to Database!**"
+				except pymongo.errors.DuplicateKeyError:
+					return "The request is invalid: 400 bad request\n\n**File with same ID already exists!**"
+			else:
+				return "**NOTE: The length of fields Name and Host should be less than 100 characters.**"
+		else:
+			return "**Please enter all mandatory data fields!**"
 
 	elif fileType.lower() == "audiobook":
-		audiobookId = int(data["audioFileMetadata"]["Id"])
-		audiobookTitle = str(data["audioFileMetadata"]["Title"])
-		audiobookAuthor = str(data["audioFileMetadata"]["Author"])
-		audiobookNarrator = str(data["audioFileMetadata"]["Narrator"])
-		audiobookDuration = int(data["audioFileMetadata"]["Duration"])
-		abf = audiobookFile(audiobookId, audiobookTitle, audiobookAuthor, audiobookNarrator, audiobookDuration)
-		abf.getUploadTime()
-		document = {"_id": abf.audiobookId, "FileType": "Audiobook", "Title": abf.audiobookTitle , "Author": abf.audiobookAuthor, "Narrator": abf.audiobookNarrator, "Duration": abf.audiobookDuration, "Upload Time": abf.audiobookUploadTime}
-		try:
-			collection.insert_one(document)
-			return "Action is successful: 200 OK\n\n**Audiobook Data uploaded to Database!**"
-		except pymongo.errors.DuplicateKeyError:
-			return "The request is invalid: 400 bad request\n\n**File with same ID already exists!**"
+		if all(item in data["audioFileMetadata"].keys() for item in ["Id", "Title", "Author", "Narrator", "Duration"]):
+			if len(max([data["audioFileMetadata"]["Title"], data["audioFileMetadata"]["Author"], data["audioFileMetadata"]["Narrator"]], key=len)) <= 100:
+				audiobookId = int(data["audioFileMetadata"]["Id"])
+				audiobookTitle = str(data["audioFileMetadata"]["Title"])
+				audiobookAuthor = str(data["audioFileMetadata"]["Author"])
+				audiobookNarrator = str(data["audioFileMetadata"]["Narrator"])
+				audiobookDuration = int(data["audioFileMetadata"]["Duration"])
+				abf = audiobookFile(audiobookId, audiobookTitle, audiobookAuthor, audiobookNarrator, audiobookDuration)
+				abf.getUploadTime()
+				document = {"_id": abf.audiobookId, "FileType": "Audiobook", "Title": abf.audiobookTitle , "Author": abf.audiobookAuthor, "Narrator": abf.audiobookNarrator, "Duration": abf.audiobookDuration, "Upload Time": abf.audiobookUploadTime}
+				try:
+					collection.insert_one(document)
+					return "Action is successful: 200 OK\n\n**Audiobook Data uploaded to Database!**"
+				except pymongo.errors.DuplicateKeyError:
+					return "The request is invalid: 400 bad request\n\n**File with same ID already exists!**"
+			else:
+				return "**NOTE: The length of fields Title, Author and Narrator should be less than 100 characters.**"
+		else:
+			return "**Please enter all mandatory data fields!**"
 
 """
 To successfully delete a song/podcast/audiobook data on the database,
